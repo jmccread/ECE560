@@ -12,11 +12,9 @@ function dx = CartPoleSystem(t, x)
     
 
     %% State Space Nonlinear Equations developed from equations of motion
-    dds = (- m*l*g*sin(theta)*cos(theta) + m*l*L*sin(theta)*dtheta.^2)/...
-        (Mt*L - m*l*(cos(theta).^2)); % Where is the u contribution???
-    
-    ddtheta = (-m*l*sin(theta)*cos(theta)*dtheta.^2 + Mt*g*sin(theta))/ ...
-        (Mt*L - m*l*(cos(theta).^2)); % Where is the u contribution???
+    dds = - m*l*g*sin(theta)*cos(theta)/(Mt*L - m*l*(cos(theta)^2)) ... 
+         ; % Where is the u contribution???
+    ddtheta = 
     
     dx = [ds; dds; dtheta; ddtheta];
     
