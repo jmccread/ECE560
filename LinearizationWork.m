@@ -8,6 +8,7 @@
 %   - Work to linearize system after some initial manipulation of the
 %   equations from the prompt
 
+clear all
 syms L Mt m l x1 x2 x3 x4 u1 u2 u3 u4 g
 
 % Define G(x) * u + H(x) = f(x, u) = dot(x)
@@ -42,6 +43,15 @@ syms s0
 x_up_star = [s0; 0; 0; 0]; 
 x_down_star = [s0; 0; pi; 0]; 
 
+% Substitute in real numbers 
+% M = 2.0; %kg
+% m = 0.1; %kg
+% l = 0.5; %m
+% J = 0.025; %kg*m^2
+% g = 9.8;  %m/s^2
+% Mt = M + m; 
+% L = (J+m*l^2)/(m*l); 
+
 % Linearization for the vertical position
 x1 = s0; x2 = 0; x3 = 0; x4 = 0; 
 u1 = 0; u2 = 0; u3 = 0; u4 = 0; 
@@ -55,3 +65,9 @@ u1 = 0; u2 = 0; u3 = 0; u4 = 0;
 
 A_down = subs(JacobianA);
 B_down = subs(JacobianB); 
+
+A_num_up = eval(A_up); 
+B_num_up = eval(B_up);
+
+A_num_down = eval(A_down); 
+B_num_down = eval(B_down); 

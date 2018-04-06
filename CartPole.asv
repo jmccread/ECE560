@@ -39,21 +39,9 @@ animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
 animation.EnablePlotRecoder();            
 
 
-%% Run Non Linear Simulation
+%% Run Simulation
 
-% delta = pi/20;
-% init = [0; 0; pi+delta; 0];
-% x_d = [0; 0; 0; 0];
-% tspan = [0, 15];
-% [t, x] = ode45(@CartPoleSystem, tspan, init);
-% 
-% animation.Draw(x(:,1), x(:,3), t);
-% animation.Close();
-
-%% Run Linearized Simulation
-
-A = A_down; B = B_down; 
-delta = pi -0.05;
+delta = 
 init = [0; 0; pi+delta; 0];
 x_d = [0; 0; 0; 0];
 tspan = [0, 15];

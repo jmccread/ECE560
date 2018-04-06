@@ -1,0 +1,13 @@
+function dx = CartPoleLinearSystem(t, x, x_d, A, B, K)
+
+%     global m M l I g;
+
+%     L = (I + m*l^2)/(m*l);
+%     Mt = M + m;
+    
+    %% PUT YOUR CODE HERE
+    u = -K*(x-x_d);
+    
+    dx = A*x + B*u;
+    
+end
