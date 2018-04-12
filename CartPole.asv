@@ -321,14 +321,14 @@ for i = 1:size(delta,2)
     [t, x] = ode45(@CartPoleSystem, tspan, init);
     left = subplot(1,2,1);
     hold on;
-    plot(init(3), init(4), 'b*','LineWidth',2);
-    plot(x(:,3), x(:,4), 'k-','LineWidth',2);
-    plot(x_lin(:,3), x_lin(:,4), 'r-.','LineWidth',2);
+    plot(init(3), init(4), 'b*');
+    plot(x(:,3), x(:,4), 'k-');
+    plot(x_lin(:,3), x_lin(:,4), 'r-.');
     right = subplot(1,2,2);
     hold on;
-    plot(init(1), init(2), 'b*','LineWidth',2);
-    plot(x(:,1), x(:,2), 'k-','LineWidth',2);
-    plot(x_lin(:,1), x_lin(:,2), 'r-.','LineWidth',2);
+    plot(init(1), init(2), 'b*');
+    plot(x(:,1), x(:,2), 'k-');
+    plot(x_lin(:,1), x_lin(:,2), 'r-.');
 %     animation.Draw(x(:,1), x(:,3), t);
 %     animation.Close();
 end 
@@ -367,14 +367,14 @@ for i = 1:size(delta,2)
     [t, x] = ode45(@CartPoleSystem, tspan, init);
     left = subplot(1,2,1);
     hold on;
-    plot(init(3), init(4), 'b*','LineWidth',2);
-    plot(x(:,3), x(:,4), 'k-','LineWidth',2);
-    plot(x_lin(:,3), x_lin(:,4), 'r-.','LineWidth',2);
+    plot(init(3), init(4), 'b*');
+    plot(x(:,3), x(:,4), 'k-');
+    plot(x_lin(:,3), x_lin(:,4), 'r-.');
     right = subplot(1,2,2);
     hold on;
-    plot(init(1), init(2), 'b*','LineWidth',2);
-    plot(x(:,1), x(:,2), 'k-','LineWidth',2);
-    plot(x_lin(:,1), x_lin(:,2), 'r-.','LineWidth',2);
+    plot(init(1), init(2), 'b*');
+    plot(x(:,1), x(:,2), 'k-');
+    plot(x_lin(:,1), x_lin(:,2), 'r-.');
 %     animation.Draw(x(:,1), x(:,3), t);
 %     animation.Close();
 end 
@@ -389,9 +389,6 @@ left.YLabel.String='Angular rate x_4 = d\theta/dt (rad/s)';
 right.FontSize = 16;
 right.FontWeight = 'bold';
 right.LineWidth = 1.5;
-left.FontSize = 16;
-left.FontWeight = 'bold';
-left.LineWidth = 1.5;
 
 % right.XLim = [-.08 .0];
 % right.YLim = [-.15 .15];
@@ -414,14 +411,13 @@ for i = 1:size(delta,2)
     left = subplot(1,2,1);
     hold on;
     plot(init(3), init(4), 'b*');
-    plot(init(3), init(4), 'b*','LineWidth',2);
-    plot(x(:,3), x(:,4), 'k-','LineWidth',2);
-    plot(x_lin(:,3), x_lin(:,4), 'r-.','LineWidth',2);
+    plot(x(:,3), x(:,4), 'k-');
+    plot(x_lin(:,3), x_lin(:,4), 'r-.');
     right = subplot(1,2,2);
     hold on;
-    plot(init(1), init(2), 'b*','LineWidth',2);
-    plot(x(:,1), x(:,2), 'k-','LineWidth',2);
-    plot(x_lin(:,1), x_lin(:,2), 'r-.','LineWidth',2);
+    plot(init(1), init(2), 'b*');
+    plot(x(:,1), x(:,2), 'k-');
+    plot(x_lin(:,1), x_lin(:,2), 'r-.');
 %     animation.Draw(x(:,1), x(:,3), t);
 %     animation.Close();
 end 
@@ -433,16 +429,11 @@ end
  left.YTickLabel = {'-0.25\pi','0', '0.25\pi'};
 left.XLabel.String='Angular displacement from vertical: x_3 = \theta (radians)';
 left.YLabel.String='Angular rate x_4 = d\theta/dt (rad/s)';
-left.FontSize = 16;
-left.FontWeight = 'bold';
-left.LineWidth = 1.5;
+
 % right.XLim = [-.08 .0];
 % right.YLim = [-.15 .15];
 right.XLabel.String='Cart position: x_1 = s (m)';
 right.YLabel.String='Cart velocity x_2 = ds/dt (m/s)';
-right.FontSize = 16;
-right.FontWeight = 'bold';
-right.LineWidth = 1.5;
 legend('Initial state', 'Nonlinear Trajectory', 'Linearized Trajectory', 'Location', 'best');
 suptitle('Hanging Equilibrium, State Trajectories with initial state [ 0 ds/dt_0 \pi 0]');
 hold off; 
