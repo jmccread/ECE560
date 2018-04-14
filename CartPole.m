@@ -100,7 +100,7 @@ right.YTick =[0 0.25*pi 0.5*pi 0.75*pi pi 1.25*pi 1.5*pi 1.75*pi  2*pi];
 right.YTickLabel = {'0' '0.25\pi' '0.5\pi' '0.75\pi'  '\pi' '1.25\pi' '1.5\pi' '1.75\pi' '2\pi'};
 
 legend('Nonlinear Trajectory', 'Linearized Trajectory', 'Location', 'best');
-suptitle('Vertical Equilibrium, Linearized vs Nonlinear Model, x_0 = [ 0 0 \pi/1000 0]');
+suptitle('Vertical Equilibrium, Linearized vs Nonlinear Model, x_0 = [ 0 0 \pi/1000 0]'`);
 hold off; 
 
 

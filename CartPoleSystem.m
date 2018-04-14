@@ -1,6 +1,6 @@
 function dx = CartPoleSystem(t, x)
 
-    global m M l I g x_d K;
+    global m M l I g x_d K u;
     
     L = (I + m*l^2)/(m*l);
     Mt = M + m;
