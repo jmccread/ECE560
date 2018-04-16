@@ -13,7 +13,7 @@ clear all;
 
 %% Declare Variables
 global m M l I g x_d K A B lin_state u;
-syms k1 k2 k3 k4 gam1 gam2 gam3 gam4
+syms k1 k2 k3 k4 gam
 % use A, B, K, and lin_state as globals to feed into dx functions
 
 m = 0.1;
@@ -27,10 +27,10 @@ Mt = M + m;
 x_d = [0; 0; 0; 0];
 %% Syms
 K = [k1 k2 k3 k4];
-Gamma = [gam1 0 0 0;
-         0 gam2 0 0;
-         0 0 gam3 0;
-         0 0 0 gam4];
+Gamma = [gam 0 0 0;
+         0 gam 0 0;
+         0 0 gam 0;
+         0 0 0 gam];
 
 A_down =   [0, 1,                    0, 0; ...
             0, 0, (g*l*m)/(l*m - L*Mt), 0; ...
@@ -59,76 +59,76 @@ P_down_close = [-0.5 -1 -1.5 -2];
 K_down_close =  place(A_down, B_down, P_down_close);
 
 % place poles at -20, -21 -22, -22 as a silly solution near far from the origin
-P_down_far = [-8, -8.5 -9, -9.5]; 
+P_down_far = [-4, -8.5 -9, -9.5]; 
 K_down_far =  place(A_down, B_down, P_down_far);
 
 % Place poles at -1.5 + 1.5j, -1.5 - 1.5j, -3.0 + 1.5j, -3 + 1.5j
 P_down_complex = [-1.5 + 1.5j, -1.5 - 1.5j, -3.0 + 1.5j, -3 - 1.5j]; 
 K_down_complex =  place(A_down, B_down, P_down_complex);
 
-% %% Real axis pole placement close to origin
-% % disp('Movie Run Non Linear Simulation - up');
-% % simulationRefreshSpeed = 10;
-% % animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
-% % animation.EnablePlotRecoder(); 
+%% Real axis pole placement close to origin
+% disp('Movie Run Non Linear Simulation - up');
+% simulationRefreshSpeed = 10;
+% animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+% animation.EnablePlotRecoder(); 
+
+delta = pi/10;
+init = [0; 0; pi+delta; 0];
+x_d = [0; 0; pi; 0];
+tspan = [0, 15];
+K = K_down_close;
+[t, x] = ode45(@CartPoleSystem, tspan, init);
+title = {'Hanging Equilibrium, State Trajectories with initial state [ 0 0 1.1\pi 0]';
+         'Hanging Equilibrium, State variables with time domain characteristics'};
+controlled_pendulum_plotter(t,x, init, P_down_close,[1,2], title);
+
+
+% animation.Draw(x(:,1), x(:,3), t);
+% animation.Close();
 % 
-% delta = pi/10;
-% init = [0; 0; pi+delta; 0];
-% x_d = [0; 0; pi; 0];
-% tspan = [0, 15];
-% K = K_down_close;
-% [t, x] = ode45(@CartPoleSystem, tspan, init);
-% title = {'Hanging Equilibrium, State Trajectories with initial state [ 0 0 1.1\pi 0]';
-%          'Hanging Equilibrium, State variables with time domain characteristics'};
-% controlled_pendulum_plotter(t,x, init, P_down_close,[1,2], title);
+%% Real axis pole placement far from origin 
+% disp('Movie Run Non Linear Simulation - up');
+% simulationRefreshSpeed = 10;
+% animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+% animation.EnablePlotRecoder(); 
+
+delta = pi/10;
+init = [0; 0; pi+delta; 0];
+x_d = [0; 0; pi; 0];
+tspan = [0, 15];
+K = K_down_far;
+[t, x] = ode45(@CartPoleSystem, tspan, init);
+title = {'Hanging Equilibrium, State Trajectories with initial state [ 0 0 1.1\pi 0]';
+         'Hanging Equilibrium, State variables with time domain characteristics'};
+controlled_pendulum_plotter(t,x, init, P_down_far,[3,4], title);
+
+% animation.Draw(x(:,1), x(:,3), t);
+% animation.Close();
 % 
+%% Real axis pole placement complex plane
+% disp('Movie Run Non Linear Simulation - up');
+% simulationRefreshSpeed = 10;
+% animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+% animation.EnablePlotRecoder(); 
+
+delta = pi/10;
+init = [0; 0; pi+delta; 0];
+x_d = [0; 0; pi; 0];
+tspan = [0, 15];
+K = K_down_complex;
+[t, x] = ode45(@CartPoleSystem, tspan, init);
+title = {'Hanging Equilibrium, State Trajectories with initial state [ 0 0 1.1\pi 0]';
+         'Hanging Equilibrium, State variables with time domain characteristics'};
+controlled_pendulum_plotter(t,x, init, P_down_complex,[1,2], title);
+
 % 
-% % animation.Draw(x(:,1), x(:,3), t);
-% % animation.Close();
-% % 
-% %% Real axis pole placement far from origin 
-% % disp('Movie Run Non Linear Simulation - up');
-% % simulationRefreshSpeed = 10;
-% % animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
-% % animation.EnablePlotRecoder(); 
-% 
-% delta = pi/10;
-% init = [0; 0; pi+delta; 0];
-% x_d = [0; 0; pi; 0];
-% tspan = [0, 15];
-% K = K_down_far;
-% [t, x] = ode45(@CartPoleSystem, tspan, init);
-% title = {'Hanging Equilibrium, State Trajectories with initial state [ 0 0 1.1\pi 0]';
-%          'Hanging Equilibrium, State variables with time domain characteristics'};
-% controlled_pendulum_plotter(t,x, init, P_down_far,[3,4], title);
-% 
-% % animation.Draw(x(:,1), x(:,3), t);
-% % animation.Close();
-% % 
-% %% Real axis pole placement complex plane
-% % disp('Movie Run Non Linear Simulation - up');
-% % simulationRefreshSpeed = 10;
-% % animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
-% % animation.EnablePlotRecoder(); 
-% 
-% delta = pi/10;
-% init = [0; 0; pi+delta; 0];
-% x_d = [0; 0; pi; 0];
-% tspan = [0, 15];
-% K = K_down_complex;
-% [t, x] = ode45(@CartPoleSystem, tspan, init);
-% title = {'Hanging Equilibrium, State Trajectories with initial state [ 0 0 1.1\pi 0]';
-%          'Hanging Equilibrium, State variables with time domain characteristics'};
-% controlled_pendulum_plotter(t,x, init, P_down_complex,[1,2], title);
-% 
-% % 
-% % animation.Draw(x(:,1), x(:,3), t);
-% % animation.Close();
+% animation.Draw(x(:,1), x(:,3), t);
+% animation.Close();
 
 
 %% Pole Placement with place command
 % place poles at -1, -2 -3, -4 as a silly solution near to the origin
-P_up_close = [-0.1 -0.15 -1.2 -0.6]; 
+P_up_close = [-0.1 -0.2 -1.2 -0.6]; 
 K_up_close =  place(A_up, B_up, P_up_close);
 
 % place poles at -20, -21 -22, -22 as a silly solution near far from the origin
@@ -136,14 +136,15 @@ P_up_far = [-1, -1.5 -3.6, -1.8];
 K_up_far =  place(A_up, B_up, P_up_far);
 
 % Place poles at -1.5 + 1.5j, -1.5 - 1.5j, -3.0 + 1.5j, -3 + 1.5j
-P_up_complex = [-.15 + .15j, -.15 - .15j, -.30 + .15j, -.3 - .15j]; 
+P_up_complex = [-3 + .5j, -3 - .5j, -1.5 + 1.5j, -1.5 - 1.5j]; 
+P_up_complex = [-1 + .5/3j, -1 - .5/3j, -.5 + .33j, -.5 - .33j];
 K_up_complex =  place(A_up, B_up, P_up_complex);
 
 %% Real axis pole placement close to origin
 % disp('Movie Run Non Linear Simulation - up');
-simulationRefreshSpeed = 10;
-animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
-animation.EnablePlotRecoder(); 
+%simulationRefreshSpeed = 10;
+%animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+%animation.EnablePlotRecoder(); 
 
 delta = pi/10;
 init = [0; 0; delta; 0];
@@ -156,14 +157,14 @@ title = {'Vertical Equilibrium, State Trajectories with initial state [ 0 0 0.1\
 controlled_pendulum_plotter(t,x, init, P_up_close,[1,2], title);
 
 
-animation.Draw(x(:,1), x(:,3), t);
-animation.Close();
+%animation.Draw(x(:,1), x(:,3), t);
+%animation.Close();
 
 %% Real axis pole placement "far" to origin
 % disp('Movie Run Non Linear Simulation - up');
-simulationRefreshSpeed = 10;
-animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
-animation.EnablePlotRecoder(); 
+%simulationRefreshSpeed = 10;
+%animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+%animation.EnablePlotRecoder(); 
 
 delta = pi/10;
 init = [0; 0; delta; 0];
@@ -175,14 +176,14 @@ title = {'Vertical Equilibrium, State Trajectories with initial state [ 0 0 0.1\
          'Vertical Equilibrium, State variables with time domain characteristics'};
 controlled_pendulum_plotter(t,x, init, P_up_far,[1,2], title);
 
-animation.Draw(x(:,1), x(:,3), t);
-animation.Close();
+%animation.Draw(x(:,1), x(:,3), t);
+%animation.Close();
 
-%% Real axis pole placement close to origin
+%% Real axis pole placement in complex plane
 % disp('Movie Run Non Linear Simulation - up');
-simulationRefreshSpeed = 10;
-animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
-animation.EnablePlotRecoder(); 
+%simulationRefreshSpeed = 10;
+%animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+%animation.EnablePlotRecoder(); 
 
 delta = pi/10;
 init = [0; 0; delta; 0];
@@ -192,11 +193,11 @@ K = K_up_complex;
 [t, x] = ode45(@CartPoleSystem, tspan, init);
 title = {'Vertical Equilibrium, State Trajectories with initial state [ 0 0 0.1\pi 0]';
          'Vertical Equilibrium, State variables with time domain characteristics'};
-controlled_pendulum_plotter(t,x, init, P__close,[1,2], title);
+controlled_pendulum_plotter(t,x, init, P_up_complex,[1,2], title);
 
 
-animation.Draw(x(:,1), x(:,3), t);
-animation.Close();
+%animation.Draw(x(:,1), x(:,3), t);
+%animation.Close();
 
 
 %% State Trajectories Vertical, Initial theta displacement, poles close to origin
