@@ -44,23 +44,23 @@ A_up =     [0, 1,                    0, 0; ...
         
 B_up =     [0; -L/(l*m - L*Mt); 0; 1/(l*m - L*Mt)];
 
-%% Hanging Equilibrium  
-% disp('Movie Run Non Linear Simulation - up');
-% simulationRefreshSpeed = 10;
-% animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
-% animation.EnablePlotRecoder(); 
-
-
+% %% Hanging Equilibrium  
+% % disp('Movie Run Non Linear Simulation - up');
+% % simulationRefreshSpeed = 10;
+% % animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+% % animation.EnablePlotRecoder(); 
+% 
+% 
 delta = pi/10;
 init = [0; 0; pi+delta; 0];
 x_d = [0; 0; pi; 0];
-tspan = [0, 15];
-index = 1; 
-for q1 = [1]
-   for q2 = [1]
-       for q3 = [1 10 100]
-            for q4 = [1 10 100]
-                for R = [0.001 0.01 1]
+tspan = [0, 25];
+ index = 1; 
+for q1 = [10]
+   for q2 = [10]
+       for q3 = [100]
+            for q4 = [100]
+                for R = [0.5]
                     Q = [q1 0 0 0; ...
                          0 q2 0 0; ...
                          0 0 q3 0; ....
@@ -68,7 +68,7 @@ for q1 = [1]
                     [K S e] = lqr(A_down, B_down, Q, R); 
                     [t, x] = ode45(@CartPoleSystem, tspan, init);
                     formatspec1 = 'K = %G, %G, %G, %G';
-                    formatspec2 = '\\lambda = %.3g %+.3g i, %.3g %+.3g i, %.3g %+.3g i, %.3g %+.3g i';
+                    formatspec2 = '\\lambda = %.3g %+.3gi, %.3g %+.3gi, %.3g %+.3gi, %.3g %+.3gi';
                     str1 = sprintf(formatspec1, K(1), K(2), K(3), K(4));
                     str2 = sprintf(formatspec2, real(e(1)), imag(e(1)), real(e(2)), imag(e(2)), real(e(3)), imag(e(3)), real(e(4)), imag(e(4))); 
                     controlled_pendulum_plotter(t,x, Q, R, index, {'Hanging Equilibrium' str1 str2 ' '})
@@ -78,7 +78,54 @@ for q1 = [1]
        end 
     end 
 end 
-%controlled_pendulum_plotter(t,x, Q, R, 1, 'tests')
+% %controlled_pendulum_plotter(t,x, Q, R, 1, 'tests')
+% 
+% % 
+% % animation.Draw(x(:,1), x(:,3), t);
+% % animation.Close();
+
+
+%% Vertical Equilibrium  
+% disp('Movie Run Non Linear Simulation - up');
+% simulationRefreshSpeed = 10;
+% animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+% animation.EnablePlotRecoder(); 
+
+% 
+% delta = pi/10;
+% init = [0; 0; delta; 0];
+% theta_fin = 0;
+% x_d = [0; 0; theta_fin; 0];
+% tspan = [0, 25];
+% index = 1 + index; 
+% for q1 = [1]
+%    for q2 = [10]
+%        for q3 = [50]
+%             for q4 = [50]
+%                 for R = [20]
+%                     %simulationRefreshSpeed = 10;
+%                     %animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+%                     %animation.EnablePlotRecoder(); 
+%                     Q = [q1 0 0 0; ...
+%                          0 q2 0 0; ...
+%                          0 0 q3 0; ....
+%                          0 0 0 q4];
+%                     [K S e] = lqr(A_up, B_up, Q, R); 
+%                     [t, x] = ode45(@CartPoleSystem, tspan, init);
+%                     formatspec1 = 'K = %G, %G, %G, %G';
+%                     formatspec2 = '\\lambda = %.3g %+.3gi, %.3g %+.3gi, %.3g %+.3gi, %.3g %+.3gi';
+%                     str1 = sprintf(formatspec1, K(1), K(2), K(3), K(4));
+%                     str2 = sprintf(formatspec2, real(e(1)), imag(e(1)), real(e(2)), imag(e(2)), real(e(3)), imag(e(3)), real(e(4)), imag(e(4))); 
+%                     controlled_pendulum_plotter(t,x, Q, R, index, {'Vertical Equilibrium' str1 str2 ' '})
+%                     index = index + 1
+%                     %animation.Draw(x(:,1), x(:,3), t);
+%                     %animation.Close();
+%                 end 
+%             end 
+%        end 
+%     end 
+% end 
+% [T D] = eig(A_up-B_up*K);
 
 % 
 % animation.Draw(x(:,1), x(:,3), t);
@@ -133,16 +180,16 @@ function controlled_pendulum_plotter(t,x, Q, R, fignum, figname)
     tdat = stepinfo(x(:,3), t, x_d(3)); 
     sdat = stepinfo(x(:,1), t, 0);
     %udat = stepinfo(u(:,1), t);
-    tabledata = {' ' 'Settling Time' 'Rise Time' 'Settling Min'; ...
+    tabledata = {' ' 'Settling T (s)' 'Rise T (s)' 'Stlng Min (rad)'; ...
                  'theta:' tdat.SettlingTime tdat.RiseTime tdat.SettlingMin; ...
-                 ' ' 'Settling Time' 'Peak Time' 'Peak Input';
+                 ' ' 'Settling T (s)' 'Peak T (s)' 'Peak S (m)';
                  's:' sdat.SettlingTime sdat.PeakTime sdat.Peak}; 
     % Create the column and row names in cell arrays 
     cnames = {'1','2','3','4'};
     rnames = {'1','2','3','4'};
     % Create the uitable
     table = uitable(f2,'Data',tabledata,...
-                'ColumnWidth',{100}, ...
+                'ColumnWidth',{120}, ...
                 'FontSize', 12, ...
                 'FontWeight', 'bold'); 
     info = subplot(2,2,4);

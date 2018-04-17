@@ -1,4 +1,0 @@
-
-formatspec = '$$Q = \\begin{tabular}{|l l l l|} %G&0&0&0\\\\ 0&%G&0&0\\\\ 0&0&%G&0\\\\ 0&0&0&%G\\\\ \\end{tabular}$$, R = %G';
-str = sprintf(formatspec, Q(1,1), Q(2,2), Q(3,3), Q(4,4), R); 
-title(str, 'Interpreter', 'latex', 'FontWeight', 'bold', 'FontSize', 14);
