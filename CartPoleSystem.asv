@@ -11,14 +11,14 @@ function dx = CartPoleSystem(t, x)
     dtheta = x(4);
     v = x(5);
   
-    u = -K*x; 
+    u = -K*(x-x_d); 
     w = alpha*(t>=Tau);
     %% State Space Nonlinear Equations developed from equations of motion
     dds = (- m*l*g*sin(theta)*cos(theta) + m*l*L*sin(theta)*dtheta.^2)/...
         (Mt*L - m*l*(cos(theta).^2)) +(L*u)/(L*Mt - l*m*cos(theta)^2);
     ddtheta = (-m*l*sin(theta)*cos(theta)*dtheta.^2 + Mt*g*sin(theta))/ ...
-        (Mt*L - m*l*(cos(theta).^2)) - (u*cos(theta) + w)/(L*Mt - l*m*cos(theta)^2);
-    dv = theta - x_d(3);
-    dx = [ds; dds; dtheta; ddtheta; dv];
+        (Mt*L - m*l*(cos(theta).^2)) - (u*cos(theta))/(L*Mt - l*m*cos(theta)^2) + w;
+    v = theta - x_d(3);
+    dx = [ds; dds; dtheta; ddtheta; derror];
     
 end
