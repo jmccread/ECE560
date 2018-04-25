@@ -1,0 +1,227 @@
+% LQRDesignTool.m
+%
+% Created by J. McCready on 2018-04-15
+% ECE 560 Winter 18
+% University of Michigan - Dearborn
+%
+% Last updated: 2018-04-08 by J. McCready
+%   - Work to easily look at the performance of various LQR compensators 
+
+close all;
+clear all;
+
+%% Declare Variables
+global m M l I g x_d K A B lin_state u;
+%syms k1 k2 k3 k4 gam
+% use A, B, K, and lin_state as globals to feed into dx functions
+
+m = 0.1;
+M = 2;
+l = 0.5;
+I = 0.025;
+g = 9.8;
+L = (I + m*l^2)/(m*l);
+Mt = M + m;
+
+x_d = [0; 0; 0; 0];
+%% Syms
+% K = [k1 k2 k3 k4];
+% Gamma = [gam 0 0 0;
+%          0 gam 0 0;
+%          0 0 gam 0;
+%          0 0 0 gam];
+
+A_down =   [0, 1,                    0, 0; ...
+            0, 0, (g*l*m)/(l*m - L*Mt), 0; ...
+            0, 0,                    0, 1; ...
+            0, 0,  (Mt*g)/(l*m - L*Mt), 0];
+B_down =   [0; -L/(l*m - L*Mt); 0; -1/(l*m - L*Mt)]; 
+        
+A_up =     [0, 1,                    0, 0; ...
+            0, 0, (g*l*m)/(l*m - L*Mt), 0; ...
+            0, 0,                    0, 1; ...
+            0, 0, -(Mt*g)/(l*m - L*Mt), 0];
+        
+B_up =     [0; -L/(l*m - L*Mt); 0; 1/(l*m - L*Mt)];
+
+%% Hanging Equilibrium  
+% % disp('Movie Run Non Linear Simulation - up');
+simulationRefreshSpeed = 10;
+animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+animation.EnablePlotRecoder(); 
+
+
+delta = pi/10;
+init = [0; 0; pi+delta; 0];
+x_d = [0; 0; pi; 0];
+tspan = [0, 25];
+ index = 1; 
+for q1 = [10]
+   for q2 = [10]
+       for q3 = [100]
+            for q4 = [100]
+                for R = [0.5]
+                    Q = [q1 0 0 0; ...
+                         0 q2 0 0; ...
+                         0 0 q3 0; ....
+                         0 0 0 q4];
+                    [K S e] = lqr(A_down, B_down, Q, R); 
+                    [t, x] = ode45(@CartPoleSystem, tspan, init);
+                    formatspec1 = 'K = %G, %G, %G, %G';
+                    formatspec2 = '\\lambda = %.3g %+.3gi, %.3g %+.3gi, %.3g %+.3gi, %.3g %+.3gi';
+                    str1 = sprintf(formatspec1, K(1), K(2), K(3), K(4));
+                    str2 = sprintf(formatspec2, real(e(1)), imag(e(1)), real(e(2)), imag(e(2)), real(e(3)), imag(e(3)), real(e(4)), imag(e(4))); 
+                    controlled_pendulum_plotter(t,x, Q, R, index, {'Hanging Equilibrium' str1 str2 ' '})
+                    index = index + 1; 
+                end 
+            end 
+       end 
+    end 
+end 
+
+animation.Draw(x(:,1), x(:,3), t);
+animation.Close();
+
+
+%% Vertical Equilibrium  
+% disp('Movie Run Non Linear Simulation - up');
+simulationRefreshSpeed = 10;
+animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+animation.EnablePlotRecoder(); 
+
+
+delta = pi/10;
+init = [0; 0; delta; 0];
+theta_fin = 0;
+x_d = [0; 0; theta_fin; 0];
+tspan = [0, 25];
+index = 1 + index; 
+for q1 = [1]
+   for q2 = [10]
+       for q3 = [50]
+            for q4 = [50]
+                for R = [20]
+                    %simulationRefreshSpeed = 10;
+                    %animation = CartPoleDraw('Cart Pole', simulationRefreshSpeed);%, gcf);
+                    %animation.EnablePlotRecoder(); 
+                    Q = [q1 0 0 0; ...
+                         0 q2 0 0; ...
+                         0 0 q3 0; ....
+                         0 0 0 q4];
+                    [K S e] = lqr(A_up, B_up, Q, R); 
+                    [t, x] = ode45(@CartPoleSystem, tspan, init);
+                    formatspec1 = 'K = %G, %G, %G, %G';
+                    formatspec2 = '\\lambda = %.3g %+.3gi, %.3g %+.3gi, %.3g %+.3gi, %.3g %+.3gi';
+                    str1 = sprintf(formatspec1, K(1), K(2), K(3), K(4));
+                    str2 = sprintf(formatspec2, real(e(1)), imag(e(1)), real(e(2)), imag(e(2)), real(e(3)), imag(e(3)), real(e(4)), imag(e(4))); 
+                    controlled_pendulum_plotter(t,x, Q, R, index, {'Vertical Equilibrium' str1 str2 ' '})
+                    index = index + 1
+                    %animation.Draw(x(:,1), x(:,3), t);
+                    %animation.Close();
+                end 
+            end 
+       end 
+    end 
+end 
+% [T D] = eig(A_up-B_up*K);
+
+animation.Draw(x(:,1), x(:,3), t);
+animation.Close();
+
+%% State Trajectories Vertical, Initial theta displacement, poles close to origin
+function controlled_pendulum_plotter(t,x, Q, R, fignum, figname)
+% This is a function that makes this file shorter 
+    global K x_d 
+    q = (x-repmat(x_d', [size(x,1), 1, 1]));
+    for i = 1:size(x, 1)
+    u(i) = -K*q(i,:)';
+    end 
+
+    %% Plot time series simulation results 
+    f2 = figure('Name',num2str(fignum(1),1),'units','normalized','outerposition',[0 0 1 .95]);
+
+    % Plot Time Data 
+    left = subplot(2,2,1);
+    yyaxis left
+    plot(t, x(:,1), 'LineWidth',2);
+    xlabel('time (s)')
+    ylabel('s (m)')
+    yyaxis right 
+    plot(t, x(:,2), 'Linewidth',2);
+    ylabel('ds/dt (m/s)')
+    left.FontSize = 16;
+    left.FontWeight = 'bold';
+    left.LineWidth = 1.5;
+
+    right = subplot(2,2,2);
+    yyaxis left
+    plot(t, x(:,3),'LineWidth',2);
+    xlabel('time (s)')
+    ylabel('\theta (rad)');
+    yyaxis right
+    plot(t, x(:,4), 'Linewidth',2);
+    ylabel('d\theta/dt (rad/s)')
+    right.FontSize = 16;
+    right.FontWeight = 'bold';
+    right.LineWidth = 1.5;
+    
+    input = subplot(2,2,3); 
+    plot(t, u, 'r-','LineWidth',2); 
+    xlabel('time (s)');
+    ylabel('u (m/s^2)')
+    input.FontSize = 16;
+    input.FontWeight = 'bold';
+    input.LineWidth = 1.5;
+    
+    % Calculate some stats 
+    tdat = stepinfo(x(:,3), t, x_d(3)); 
+    sdat = stepinfo(x(:,1), t, 0);
+    %udat = stepinfo(u(:,1), t);
+    tabledata = {' ' 'Settling T (s)' 'Rise T (s)' 'Stlng Min (rad)'; ...
+                 'theta:' tdat.SettlingTime tdat.RiseTime tdat.SettlingMin; ...
+                 ' ' 'Settling T (s)' 'Peak T (s)' 'Peak S (m)';
+                 's:' sdat.SettlingTime sdat.PeakTime sdat.Peak}; 
+    % Create the column and row names in cell arrays 
+    cnames = {'1','2','3','4'};
+    rnames = {'1','2','3','4'};
+    % Create the uitable
+    table = uitable(f2,'Data',tabledata,...
+                'ColumnWidth',{120}, ...
+                'FontSize', 12, ...
+                'FontWeight', 'bold'); 
+    info = subplot(2,2,4);
+    pos = get(subplot(2,2,4),'position');
+    delete(subplot(2,2,4))
+    set(table,'units','normalized')
+    set(table,'position',pos)
+    
+    formatspec = '$$Q = \\begin{tabular}{|l l l l|} %G&0&0&0\\\\ 0&%G&0&0\\\\ 0&0&%G&0\\\\ 0&0&0&%G\\\\ \\end{tabular}$$, R = %G';
+    str = sprintf(formatspec, Q(1,1), Q(2,2), Q(3,3), Q(4,4), R); 
+    title(right, {str ' '}, 'Interpreter', 'latex', 'FontWeight', 'bold', 'FontSize', 14);
+    title(left, figname,'FontWeight', 'bold', 'FontSize', 14);    
+end
+
+function dx = CartPoleSystem(t, x)
+
+    global m M l I g x_d K u;
+    
+    L = (I + m*l^2)/(m*l);
+    Mt = M + m;
+
+    s = x(1);
+    ds = x(2);
+    theta = x(3);
+    dtheta = x(4);
+  
+    u = -K*(x-x_d); 
+
+    %% State Space Nonlinear Equations developed from equations of motion
+    dds = (- m*l*g*sin(theta)*cos(theta) + m*l*L*sin(theta)*dtheta.^2)/...
+        (Mt*L - m*l*(cos(theta).^2)) +(L*u)/(L*Mt - l*m*cos(theta)^2);
+    ddtheta = (-m*l*sin(theta)*cos(theta)*dtheta.^2 + Mt*g*sin(theta))/ ...
+        (Mt*L - m*l*(cos(theta).^2)) - (u*cos(theta))/(L*Mt - l*m*cos(theta)^2);
+    
+    dx = [ds; dds; dtheta; ddtheta];
+    
+end
+
